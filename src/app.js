@@ -21,14 +21,14 @@ app.use('/api/v1/task', taskRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
-    db.raw('SELECT 1').then(() => {
-        console.log('Database connection successful');
-    }).catch(error => {
-        console.error('Database connection error:', error);
-        throw error;
-    });
-})
+    try {
+        await db.migrate.latest(); // Run migrations when the server starts
+        console.log('Database migrations completed successfully');
+    } catch (error) {
+        console.error('Error running migrations:', error);
+    }
+});
 
 module.exports = app;
